@@ -1,0 +1,47 @@
+# Facebook target. Credentials come from .env (never here).
+# The first login is where FB throws Arkose / device checks at you -> handoff;
+# afterwards the saved profile + 2captcha carry it.
+name: facebook
+url: https://www.facebook.com/login
+login_url: https://www.facebook.com/login
+after_login_url: https://www.facebook.com/
+
+success_url_patterns:
+  - facebook.com/?sk=welcome
+  - facebook.com/home
+success_selectors:
+  - "[aria-label='Your profile']"
+  - "div[role='navigation']"
+  - "[data-pagelet='LeftRail']"
+
+handoff_url_patterns:
+  - /checkpoint
+  - /recover
+  - /login/device-based
+  # Verified live 2026-09-11: Meta's Arkose MatchKey human check lands here, not
+  # on /checkpoint. Without this the agent retries a solver that Meta rejects
+  # instead of escalating to a human.
+  - /two_step_verification
+handoff_selectors:
+  - "iframe[src*='arkoselabs']"
+  - "iframe[src*='captcha/arkose']"
+  - "iframe[src*='recaptcha']"
+  - "div[class*='captcha']"
+
+# auto: the agent clears Arkose/reCAPTCHA with 2captcha and only escalates to you
+# if the challenge survives. Use "never" for a fully unattended profile.
+handoff_mode: auto
+
+login_selectors:
+  email: "#email"
+  password: "#pass"
+  submit: "button[name='login']"
+
+credentials:
+  email: ${FB_EMAIL}
+  password: ${FB_PASSWORD}
+
+notes: |
+  Post-login interstitials in order: "Save your login info?" -> Not now,
+  notification prompt -> Not now, cookie banner -> Accept all.
+  Never retry a rejected password more than once (checkpoint risk).

@@ -1,0 +1,41 @@
+# Example target — copy this file per site and fill it in.
+#
+# ${VAR} references are expanded from the container environment, so put
+# secrets in the host .env file, never in this yaml.
+name: example
+url: https://example.com/login
+login_url: https://example.com/login
+after_login_url: https://example.com/home
+
+# Any of these means "we are in".
+success_url_patterns:
+  - /home
+  - /dashboard
+success_selectors:
+  - "#user-menu"
+  - "[data-testid=logout]"
+
+# Any of these means "a human is required" - checked before the agent even starts.
+handoff_url_patterns: []
+handoff_selectors:
+  - "iframe[src*='arkoselabs']"
+  - "#captcha-challenge"
+
+# eager = park the session for a human as soon as a rule above matches
+# auto  = solve/interact first, handoff only as a fallback (recommended)
+# never = no human at all, the agent must clear everything itself
+handoff_mode: auto
+
+# Hints handed to the model (it still verifies them with page_info).
+login_selectors:
+  email: "input[type=email]"
+  password: "input[type=password]"
+  submit: "button[type=submit]"
+
+credentials:
+  email: ${SITE_EMAIL}
+  password: ${SITE_PASSWORD}
+  totp_seed: ${SITE_TOTP_SEED}
+
+notes: |
+  Free-form notes for the operator. Delete what does not apply.

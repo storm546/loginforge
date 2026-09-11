@@ -1,0 +1,17 @@
+# secrets — never commit
+.env
+.env.*
+!.env.example
+*.bak
+*.key
+
+# session state: profiles/<id>/chrome is a live logged-in browser profile
+profiles/
+# run artifacts: run.jsonl, result.json, screenshots, storage_state.json (cookies)
+out/
+
+# runtime
+.engine
+*.pyc
+__pycache__/
+.pytest_cache/
